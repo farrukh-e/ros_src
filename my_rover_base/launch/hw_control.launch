@@ -1,0 +1,24 @@
+<!-- https://answers.ros.org/question/221093/basic-diff_drive-question/ -->
+<!-- https://github.com/ros-controls/ros_controllers/tree/kinetic-devel/diff_drive_controller/test -->
+
+<launch>
+
+	<!-- Load robot model -->
+	<param name="robot_description"
+    	   command="$(find xacro)/xacro '$(find my_rover_description)/urdf/my_rover.xacro' --inorder"/>
+
+    <node name="my_rover_base_node" 
+          pkg="my_rover_base" 
+          type="my_rover_base_node"/>
+
+    <!-- Load controller config -->
+    <rosparam command="load" 
+              file="$(find my_rover_base)/config/my_rover_common.yaml"/>
+
+    <node name="controller_spawner" 
+          pkg="controller_manager" 
+          type="spawner" 
+          output="screen" 
+          args="mobile_base_controller"/> 
+          
+</launch>
