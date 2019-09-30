@@ -1,17 +1,14 @@
-Learn how to create packages outside catkin_ws or create multiple ws for different projects
 
 Strating gazebo 
 roslaunch gazebo_ros empty_world.launch
 source /opt/ros/melodic/setup.bash
 source ~/catkin_ws/devel/setup.bash
 
-to turn on Anaconda 
+to enable Anaconda 
  export PATH="/home/argonaut/anaconda3/bin:$PATH"
 
 roslaunch rplidar_ros rplidar.launch lidar launch on rpi 
 rviz config on pc
-
-ssh ealdelo@192.168.137.9
 
 multi window terminal
 tmux new -s ros
@@ -30,7 +27,7 @@ rosrun rosserial_python serial_node.py /dev/ttyUSB0
 rosrun teleop_twist_keyboard teleop_twist_keyboard.py
 
 
-If you want a command line version try iostat
+iostat
 
 
 
