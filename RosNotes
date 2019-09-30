@@ -1,0 +1,39 @@
+Learn how to create packages outside catkin_ws or create multiple ws for different projects
+
+Strating gazebo 
+roslaunch gazebo_ros empty_world.launch
+source /opt/ros/melodic/setup.bash
+source ~/catkin_ws/devel/setup.bash
+
+to turn on Anaconda 
+ export PATH="/home/argonaut/anaconda3/bin:$PATH"
+
+roslaunch rplidar_ros rplidar.launch lidar launch on rpi 
+rviz config on pc
+
+ssh ealdelo@192.168.137.9
+
+multi window terminal
+tmux new -s ros
+
+Distribute ros 
+1)export ROS_MASTER_URI=http://argonaut:11311/ on pc 
+2)export ROS_MASTER_URI=http://192.168.137.203:11311/ om rpi
+% if wrong ip went into step 2
+3)export ROS_IP=192.168.137.203 on pc
+4)export ROS_IP=192.168.137.9 on rpi
+
+usb sudo chmod 666 /dev/ttyUSB0
+
+rosrun rosserial_python serial_node.py /dev/ttyUSB0
+
+rosrun teleop_twist_keyboard teleop_twist_keyboard.py
+
+
+If you want a command line version try iostat
+
+
+
+
+
+
