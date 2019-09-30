@@ -18,10 +18,10 @@ tmux new -s ros
 
 Distribute ros 
 1)export ROS_MASTER_URI=http://argonaut:11311/ on pc 
-2)export ROS_MASTER_URI=http://192.168.137.203:11311/ om rpi
+2)export ROS_MASTER_URI=http://(pcip):11311/ om rpi
 % if wrong ip went into step 2
-3)export ROS_IP=192.168.137.203 on pc
-4)export ROS_IP=192.168.137.9 on rpi
+3)export ROS_IP= on pc
+4)export ROS_IP= on rpi
 
 usb sudo chmod 666 /dev/ttyUSB0
 
