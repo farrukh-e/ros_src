@@ -47,7 +47,7 @@ class driver:
 		x,y,th = 0,0,0
 		past_ticks_left, past_ticks_right = 0,0 
 		vel_left = 0.0
-		rate = rospy.Rate(3)
+		rate = rospy.Rate(10)
 		while not rospy.is_shutdown():
 
 			#current_ticks = [self.left_ticks, self.right_ticks]
@@ -57,7 +57,7 @@ class driver:
 			#Calculate velocity from angular velocity
 			dt = (current_time - past_time).to_sec()
 			dist_per_rev = (2 * 3.14 * .03) / 540
-			vel_left = dist_per_rev * ((self.left_ticks - past_ticks_left) / dt )
+			vel_left = -dist_per_rev * ((self.left_ticks - past_ticks_left) / dt )
 			vel_right = dist_per_rev * ((self.right_ticks - past_ticks_right) / dt )
 			
 			#Average velocities and compensate for slip
@@ -71,7 +71,7 @@ class driver:
 			delta_th = vth * dt
 
 			# Summarize 
-			x += 10* delta_x
+			x += delta_x
 			y += delta_y
 			th += delta_th
 
@@ -101,6 +101,7 @@ class driver:
 
 			rospy.loginfo("Velocity left and right: %s, %s", vel_left, vel_right)
 			#rospy.loginfo("velcoity x and vth, delta_th: %s, %s, %s", vx, vth, delta_th)
+			
 			past_ticks_left = self.left_ticks
 			past_ticks_right = self.right_ticks
 			past_time = current_time
