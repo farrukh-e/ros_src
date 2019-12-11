@@ -1,0 +1,59 @@
+Name Project2;
+PartNo 00;
+Date ;
+Reision 01;
+Device v750c;
+
+PIN 1 = CLK; // external clock input
+PIN 2 = INP; // Inp 4
+PIN 3 = INP; // Inp 3
+PIN 4 = INP; // Inp 2 
+PIN 5 = INP; // Inp 1
+PIN 6 = INP; // Reset
+
+PIN 23 = QA; // Lock
+PIN 22 = QA; // Out C
+PIN 21 = QA; // Out B
+PIN 20 = QA; // Out A
+
+/ **************** STATES OF FSM **************** /
+FIELD state_n = QA;
+
+$define S0 'b'1 // 0
+$define S1 'b'0 // 0 	
+$define S2 'b'0 // 0
+$define S3 'b'0 // 0
+$define S4 'b'1 // 1
+
+/ **************** LOGIC ***************** /
+QA.CK = CLK;
+QA.D = INP $ QA;
+
+/ **************** Flip Flop Controll Signals ************ /
+QA.SP = 'b'.0;
+QA.AR = 'b'.0;
+QA.SP = 'b'.1;
+/ **************** State Machine ************************* /
+
+SEQUENCED state_n {
+PRESET S0
+	IF !INP NEXT S0;
+	IF INP NEXT S1;
+PRESET S1
+	IF !INP NEXT S0;
+	IF INP NEXT S0;
+PRESET S2	
+	IF !INP NEXT S0;
+	IF INP NEXT S0;
+PRESET S3
+	IF !INP NEXT S0;
+	IF INP NEXT S0;
+PRESET S4
+	IF !INP NEXT S0;
+	IF INP NEXT S0;
+}
+
+
+
+
+
