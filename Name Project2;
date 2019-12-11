@@ -5,19 +5,19 @@ Reision 01;
 Device v750c;
 
 PIN 1 = CLK; /* external clock input
-PIN 2 = B4;  /*Inp 4
-PIN 3 = B3;  /* Inp 3
-PIN 4 = B2;  /* Inp 2 
-PIN 5 = B1;  /* Inp 1
-PIN 6 = R;   /* Reset
+PIN 2 = B4;  /* Inp 4 */
+PIN 3 = B3;  /* Inp 3 */
+PIN 4 = B2;  /* Inp 2 */
+PIN 5 = B1;  /* Inp 1 */
+PIN 6 = R;   /* Reset */
 
-PIN 23 = L;  /*Lock
-PIN 22 = C;  /*Out C
-PIN 21 = B;  /*Out B
-PIN 20 = A;  /*Out A
-PIN 19 = QA; /* D-type flip-flop output
-PIN 18 = QB; /* D-type flip-flop output
-PIN 17 = QC; /* D-type flip-flop output
+PIN 23 = L;  /* Lock */
+PIN 22 = C;  /* Out C */
+PIN 21 = B;  /* Out B */
+PIN 20 = A;  /* Out A */
+PIN 19 = QA; /* D-type flip-flop output */
+PIN 18 = QB; /* D-type flip-flop output */
+PIN 17 = QC; /* D-type flip-flop output */
 
 / **************** STATES OF FSM **************** /
 FIELD state_n = [QA, QB, QC];
