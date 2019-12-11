@@ -37,19 +37,27 @@ $define S4 'b'100
 
 / **************** Generate Controll signal *********** /
 
+L = 
+C = 
+B = 
+A = 
 
 / **************** State Machine ************************* /
 SEQUENCED state_n {
 PRESET S0
-	IF B3 & B1 NEXT S1;
+	IF B4! & B3 & B2! & B1 NEXT S1;
 PRESET S1
-	IF B4 NEXT S2;
+	IF B4! & B3 & B2! & B1! NEXT S2;
+	IF B4 # B3 # B2 # B1 NEXT S0;
 PRESET S2	
-	IF B2 NEXT S3;
+	IF B4! & B3! & B2 & B1! NEXT S3;
+	IF B4 # B3 # B2 # B1 NEXT S0;
 PRESET S3
-	IF B4 & B2  NEXT S0;
+	IF B4! & B3 & B2 & B1! NEXT S4;
+	IF B4 # B3 # B2 # B1 NEXT S0;
 PRESET S4
-	IF  NEXT S0;
+	IF B4 # B3 # B2 # B1 NEXT S0;
+
 }
 
 
