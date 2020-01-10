@@ -1,69 +1,55 @@
 #!/usr/bin/env python
 
 
-#encoder velocity passes eye test
-#filtering needs to be imlemented with scipy
-#remote control and harware abstraction works 
-#odometry transform needs to published 
-#odometry callculations need to added
-
-
 import math
 import rospy
 import tf
 from std_msgs.msg import String
 from std_msgs.msg import Int16
+from std_msgs.msg import Float32
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3
 
 
 class driver:
+
+
 	def __init__(self):
 
-		self.right_ticks = 0
-		self.left_ticks = 0 
-		self.len_between_wheels = .185
-
-		rospy.init_node('driver', anonymous=True)
-		rospy.Subscriber('/left_ticks', Int16, self.left_encoder_callback)
-		rospy.Subscriber('/right_ticks', Int16, self.right_encoder_callback)
+ 		self.len_between_wheels = .185
+ 		self.left_velocity, self.right_velocity = 0.0, 0.0
+		rospy.Subscriber('/left_velocity', Float32, self.left_encoder_callback)
+		rospy.Subscriber('/right_velocity', Float32, self.right_encoder_callback)
 		#tf broadcaster
 		self.odom_pub = rospy.Publisher("odom", Odometry, queue_size = 50)
 		self.odom_broadcaster = tf.TransformBroadcaster()
 
 		self.velocity_converter()
 
-	def left_encoder_callback(self, left_ticks):
-		self.left_ticks = abs(left_ticks.data)
-		#rospy.loginfo("Left_encoder_reading: %s", left_ticks.data)
+	def left_encoder_callback(self, left_velocity):
+		self.left_velocity = abs(left_velocity.data)
+		#rospy.loginfo("Left_encoder_reading: %s", left_velocity.data)
 	
-	def right_encoder_callback(self, right_ticks):
-		self.right_ticks = abs(right_ticks.data)
-		#rospy.loginfo("Right_encoder_reading: %s", right_ticks.data)
+	def right_encoder_callback(self, right_velocity):
+		self.right_velocity = abs(right_velocity.data)
+		#rospy.loginfo("Right_encoder_reading: %s", right_velocity.data)
 
 	def velocity_converter(self):
+		
 		past_time = rospy.Time.now()
-		past_ticks = [0,0]
 		x,y,th = 0,0,0
-		past_ticks_left, past_ticks_right = 0,0 
-		vel_left = 0.0
-		rate = rospy.Rate(3)
+		rate = rospy.Rate(5)
 		while not rospy.is_shutdown():
 
-			#current_ticks = [self.left_ticks, self.right_ticks]
-			
 			current_time = rospy.Time.now()
 
 			#Calculate velocity from angular velocity
 			dt = (current_time - past_time).to_sec()
-			dist_per_rev = (2 * 3.14 * .03) / 540
-			vel_left = dist_per_rev * ((self.left_ticks - past_ticks_left) / dt )
-			vel_right = dist_per_rev * ((self.right_ticks - past_ticks_right) / dt )
 			
 			#Average velocities and compensate for slip
-			vx = 1.05 * (vel_right + vel_left)/2 
+			vx = 1.05 * (self.right_velocity + self.left_velocity)/2 
 			vy = 0
-			vth = 1.05 * (vel_right - vel_left)/self.len_between_wheels
+			vth = 1.05 * (self.right_velocity - self.left_velocity)/self.len_between_wheels
 			
 			#Use orientation to calculate heading
 			delta_x = (vx * math.cos(th)) * dt
@@ -99,16 +85,16 @@ class driver:
 			#publish odom message
 			self.odom_pub.publish(odom)
 
-			rospy.loginfo("Velocity left and right: %s, %s", vel_left, vel_right)
+			rospy.loginfo("Velocity left and right: %s, %s", self.left_velocity, self.right_velocity)
 			#rospy.loginfo("velcoity x and vth, delta_th: %s, %s, %s", vx, vth, delta_th)
-			past_ticks_left = self.left_ticks
-			past_ticks_right = self.right_ticks
+	
 			past_time = current_time
 			rate.sleep()
 
 if __name__ == '__main__':
+    rospy.init_node('driver', anonymous=True)
     try:
-        d = driver()
+        driver()
         rospy.spin()
 
     except rospy.ROSInterruptException: 
