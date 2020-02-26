@@ -18,8 +18,8 @@ class driver:
 
  		self.len_between_wheels = .185
  		self.left_velocity, self.right_velocity = 0.0, 0.0
-		rospy.Subscriber('/left_velocity', Float32, self.left_encoder_callback)
-		rospy.Subscriber('/right_velocity', Float32, self.right_encoder_callback)
+		rospy.Subscriber('/vel_left', Float32, self.left_encoder_callback)
+		rospy.Subscriber('/vel_right', Float32, self.right_encoder_callback)
 		#tf broadcaster
 		self.odom_pub = rospy.Publisher("odom", Odometry, queue_size = 50)
 		self.odom_broadcaster = tf.TransformBroadcaster()
@@ -27,15 +27,14 @@ class driver:
 		self.velocity_converter()
 
 	def left_encoder_callback(self, left_velocity):
-		self.left_velocity = abs(left_velocity.data)
+		self.left_velocity = left_velocity.data
 		#rospy.loginfo("Left_encoder_reading: %s", left_velocity.data)
-	
+
 	def right_encoder_callback(self, right_velocity):
-		self.right_velocity = abs(right_velocity.data)
+		self.right_velocity = right_velocity.data
 		#rospy.loginfo("Right_encoder_reading: %s", right_velocity.data)
 
 	def velocity_converter(self):
-		
 		past_time = rospy.Time.now()
 		x,y,th = 0,0,0
 		rate = rospy.Rate(5)
@@ -45,23 +44,21 @@ class driver:
 
 			#Calculate velocity from angular velocity
 			dt = (current_time - past_time).to_sec()
-			
 			#Average velocities and compensate for slip
-			vx = 1.05 * (self.right_velocity + self.left_velocity)/2 
+			vx = 1.05 * (self.right_velocity + self.left_velocity)/2
 			vy = 0
 			vth = 1.05 * (self.right_velocity - self.left_velocity)/self.len_between_wheels
-			
 			#Use orientation to calculate heading
 			delta_x = (vx * math.cos(th)) * dt
 			delta_y = (vx * math.sin(th)) * dt
 			delta_th = vth * dt
 
-			# Summarize 
-			x += 10* delta_x
+			# Summarize
+			x += delta_x
 			y += delta_y
 			th += delta_th
 
-			#Quaterion from th 
+			#Quaterion from th
 			odom_quat = tf.transformations.quaternion_from_euler(0,0,th)
 			#Publish blank tf
 			self.odom_broadcaster.sendTransform(
@@ -71,7 +68,6 @@ class driver:
 				"link_chassis",
 				"odom")
 
-			
 			#publish odom
 			odom = Odometry()
 			odom.header.stamp = current_time
@@ -81,13 +77,11 @@ class driver:
 			#set vel
 			odom.child_frame_id = "link_chassis"
 			odom.twist.twist = Twist(Vector3(vx,vy, 0), Vector3(0, 0, vth))
-			
 			#publish odom message
 			self.odom_pub.publish(odom)
 
 			rospy.loginfo("Velocity left and right: %s, %s", self.left_velocity, self.right_velocity)
 			#rospy.loginfo("velcoity x and vth, delta_th: %s, %s, %s", vx, vth, delta_th)
-	
 			past_time = current_time
 			rate.sleep()
 
@@ -97,7 +91,7 @@ if __name__ == '__main__':
         driver()
         rospy.spin()
 
-    except rospy.ROSInterruptException: 
+    except rospy.ROSInterruptException:
         pass
 
 
