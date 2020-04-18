@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+#.2041 max vel
 
 import math
 import rospy
@@ -37,7 +37,7 @@ class driver:
 	def velocity_converter(self):
 		past_time = rospy.Time.now()
 		x,y,th = 0,0,0
-		rate = rospy.Rate(5)
+		rate = rospy.Rate(20)
 		while not rospy.is_shutdown():
 
 			current_time = rospy.Time.now()
@@ -45,9 +45,9 @@ class driver:
 			#Calculate velocity from angular velocity
 			dt = (current_time - past_time).to_sec()
 			#Average velocities and compensate for slip
-			vx = 1.05 * (self.right_velocity + self.left_velocity)/2
+			vx = (self.right_velocity + self.left_velocity)/2
 			vy = 0
-			vth = 1.05 * (self.right_velocity - self.left_velocity)/self.len_between_wheels
+			vth = (self.right_velocity - self.left_velocity)/self.len_between_wheels
 			#Use orientation to calculate heading
 			delta_x = (vx * math.cos(th)) * dt
 			delta_y = (vx * math.sin(th)) * dt
@@ -59,7 +59,7 @@ class driver:
 			th += delta_th
 
 			#Quaterion from th
-			odom_quat = tf.transformations.quaternion_from_euler(0,0,th)
+			odom_quat = tf.transformations.quaternion_from_euler(0,0,(th))
 			#Publish blank tf
 			self.odom_broadcaster.sendTransform(
 				(x,y, 0.),
@@ -80,7 +80,7 @@ class driver:
 			#publish odom message
 			self.odom_pub.publish(odom)
 
-			rospy.loginfo("Velocity left and right: %s, %s", self.left_velocity, self.right_velocity)
+			rospy.loginfo("Velocity left and right: %s, %s", x, th)
 			#rospy.loginfo("velcoity x and vth, delta_th: %s, %s, %s", vx, vth, delta_th)
 			past_time = current_time
 			rate.sleep()
